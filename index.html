@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Capture demo</title>
+  <script type="module">
+		localStorage.clear();
+
+    const data = document.querySelector("#data");
+    const info = document.querySelector("#info");
+    const capture = document.querySelector("#capture");
+
+    const saveData = e => {
+      if (e.target.type !== "text") {
+        return;
+      }
+      localStorage.setItem("data", data.value);
+    };
+
+    const addBlurListener = (capture) => document.addEventListener("blur", saveData, { capture })
+    const removeBlurListener = (capture) => document.removeEventListener("blur", saveData, { capture })
+
+    data.addEventListener("blur", () => {
+      // timeout to allow data to be captured first
+      setTimeout(() => info.innerText = localStorage.getItem("data"), 300)
+    });
+
+    capture.addEventListener("change", () => {
+      localStorage.clear();
+      info.innerText = "";
+      data.value = "";
+      removeBlurListener(!capture.checked);
+      addBlurListener(capture.checked);
+    })
+
+
+    addBlurListener(false);
+  </script>
+</head>
+<body style="padding: 32px;">
+<h1>Capture demo, type something in input and blur to see saved data</h1>
+<label for="data">Data</label> <input id="data" type="text">
+<br>
+<label>Add listener with capture? <input type="checkbox" id="capture"></label>
+<br><br>
+Saved data:
+<pre id="info"></pre>
+</body>
+</html>
